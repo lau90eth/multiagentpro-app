@@ -328,6 +328,18 @@ footer { padding: 32px 0; border-top: 1px solid var(--border); display: flex; ju
 <div class="toast" id="toast"></div>
 
 <script type="module">
+// Stub functions — replaced after module loads
+window._connectWallet = function() { setTimeout(() => window._connectWallet && window._connectWallet(), 100); };
+window._openPostTask = function() { setTimeout(() => window._openPostTask && window._openPostTask(), 100); };
+window.closeModal = function(id) { document.getElementById(id).classList.remove('open'); };
+window._filterTasks = function(f, b) { setTimeout(() => window._filterTasks && window._filterTasks(f, b), 100); };
+window._refreshTasks = function() { setTimeout(() => window._refreshTasks && window._refreshTasks(), 100); };
+window._openSubmit = function(id) { setTimeout(() => window._openSubmit && window._openSubmit(id), 100); };
+window._submitResult = function() { setTimeout(() => window._submitResult && window._submitResult(), 100); };
+window._postTask = function() { setTimeout(() => window._postTask && window._postTask(), 100); };
+window._checkReputation = function() { setTimeout(() => window._checkReputation && window._checkReputation(), 100); };
+
+
 const CONTRACT = '0x9F28ABaBF8b6DfB85FD5dA9D0e1CA3359BB548dA';
 const RPC = 'https://rpc-bradbury.genlayer.com';
 const EXPLORER = 'https://explorer-bradbury.genlayer.com/tx/';
@@ -421,7 +433,7 @@ async function readContract(fn, args = []) {
   return await c.readContract({ address: CONTRACT, functionName: fn, args });
 }
 
-window.connectWallet = async function() {
+window._connectWallet = async function() {
   if (!window.ethereum) { showToast('MetaMask not found', 'error'); return; }
   try {
     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
@@ -458,7 +470,7 @@ async function sendWriteTx(calldataRaw) {
   });
 }
 
-window.openPostTask = function() {
+window._openPostTask = function() {
   if (!walletAddress) { showToast('Connect wallet first', 'error'); return; }
   document.getElementById('postModal').classList.add('open');
 };
@@ -467,7 +479,7 @@ window.closeModal = function(id) {
   document.getElementById(id).classList.remove('open');
 };
 
-window.postTask = async function() {
+window._postTask = async function() {
   const desc = document.getElementById('taskDesc').value.trim();
   const rubric = document.getElementById('taskRubric').value.trim();
   const reward = document.getElementById('taskReward').value.trim();
@@ -488,7 +500,7 @@ window.postTask = async function() {
   btn.innerHTML = 'POST TASK'; btn.disabled = false;
 };
 
-window.openSubmit = async function(taskId) {
+window._openSubmit = async function(taskId) {
   if (!walletAddress) { showToast('Connect wallet first', 'error'); return; }
   selectedTaskId = taskId;
   const detail = document.getElementById('selectedTaskDetail');
@@ -500,7 +512,7 @@ window.openSubmit = async function(taskId) {
   } catch(e) { detail.innerHTML = 'Could not load task details.'; }
 };
 
-window.submitResult = async function() {
+window._submitResult = async function() {
   const result = document.getElementById('resultText').value.trim();
   if (!result) { showToast('Enter your result', 'error'); return; }
   const btn = document.getElementById('submitBtn');
@@ -516,7 +528,7 @@ window.submitResult = async function() {
   btn.innerHTML = 'SUBMIT FOR JUDGMENT'; btn.disabled = false;
 };
 
-window.checkReputation = async function() {
+window._checkReputation = async function() {
   const addr = document.getElementById('repInput').value.trim();
   if (!addr) return;
   try {
@@ -547,14 +559,14 @@ function addrToB64(hex) {
   return btoa(String.fromCharCode(...bytes));
 }
 
-window.filterTasks = function(filter, btn) {
+window._filterTasks = function(filter, btn) {
   currentFilter = filter;
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   if (btn) btn.classList.add('active');
   renderTasks();
 };
 
-window.refreshTasks = async function() {
+window._refreshTasks = async function() {
   await loadTasks();
 };
 
