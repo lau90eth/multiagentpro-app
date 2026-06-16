@@ -178,7 +178,7 @@ footer { padding: 32px 0; border-top: 1px solid var(--border); display: flex; ju
     </div>
     <div class="nav-right">
       <div class="badge-live"><div class="dot-live"></div>BRADBURY TESTNET</div>
-      <button class="btn-wallet" id="walletBtn2" onclick="window.connectWallet()">Connect Wallet</button>
+      <button class="btn-wallet" id="walletBtn" onclick="connectWallet()">Connect Wallet</button>
     </div>
   </nav>
 
@@ -201,8 +201,8 @@ footer { padding: 32px 0; border-top: 1px solid var(--border); display: flex; ju
       </div>
     </div>
     <div class="hero-cta">
-      <button class="btn-primary" id="postBtn1" onclick="window.openPostTask()">Post a Task</button>
-      <button class="btn-outline" id="browseBtn" onclick="document.getElementById('taskSection').scrollIntoView({behavior:'smooth'})">Browse Tasks</button>
+      <button class="btn-primary" onclick="openPostTask()">Post a Task</button>
+      <button class="btn-outline" onclick="document.getElementById('taskSection').scrollIntoView({behavior:'smooth'})">Browse Tasks</button>
     </div>
   </div>
 
@@ -234,7 +234,7 @@ footer { padding: 32px 0; border-top: 1px solid var(--border); display: flex; ju
     <div class="section-header">
       <span class="section-label">Task Board</span>
       <div class="section-line"></div>
-      <button class="btn-primary" style="padding:8px 16px;font-size:11px" id="postBtn3" onclick="window.openPostTask()">+ Post Task</button>
+      <button class="btn-primary" style="padding:8px 16px;font-size:11px" onclick="openPostTask()">+ Post Task</button>
     </div>
     <div class="tabs">
       <button class="tab active" onclick="filterTasks('all', this)">All</button>
@@ -279,7 +279,7 @@ footer { padding: 32px 0; border-top: 1px solid var(--border); display: flex; ju
   <footer>
     <div class="footer-left">
       Built by <a href="https://github.com/lau90eth" target="_blank" style="color:var(--accent2);text-decoration:none">lau90eth</a> · GenLayer Builders Program<br>
-      <span class="footer-contract">Contract: 0x9F28ABaBF8b6DfB85FD5dA9D0e1CA3359BB548dA · Bradbury Testnet</span>
+      <span class="footer-contract">Contract: 0x8387523a7E499eF69EbB97De5f6F9AFa032cf902 · Bradbury Testnet</span>
     </div>
     <div class="footer-links">
       <a href="https://github.com/lau90eth/multiagentpro" target="_blank">GitHub</a>
@@ -327,8 +327,8 @@ footer { padding: 32px 0; border-top: 1px solid var(--border); display: flex; ju
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<script>
-const CONTRACT = '0x9F28ABaBF8b6DfB85FD5dA9D0e1CA3359BB548dA';
+<script type="module">
+const CONTRACT = '0x8387523a7E499eF69EbB97De5f6F9AFa032cf902';
 const RPC = 'https://rpc-bradbury.genlayer.com';
 const EXPLORER = 'https://explorer-bradbury.genlayer.com/tx/';
 
@@ -561,26 +561,24 @@ window.refreshTasks = async function() {
 async function loadTasks() {
   const grid = document.getElementById('taskGrid');
   try {
-    const [countStr, allStr] = await Promise.all([
-      readContract('get_count', []),
-      readContract('get_all', [])
-    ]);
-    const n = parseInt(countStr) || 0;
+    const count = await readContract('get_count', []);
+    const n = parseInt(count) || 0;
     document.getElementById('statTasks').textContent = n;
     allTasks = [];
     let completed = 0;
-    if (allStr && allStr !== 'not found' && allStr.trim()) {
-      const parts = allStr.split(';;');
-      parts.forEach((part, i) => {
-        if (!part.trim()) return;
-        const fields = part.split('|');
-        if (fields.length < 3) return;
-        const desc = fields[0];
-        const status = fields[1];
-        const reward = fields[2];
-        allTasks.push({ id: i, desc, reward, status, rubric: '' });
-        if (status === 'completed') completed++;
-      });
+    for (let i = 0; i < n; i++) {
+      try {
+        const [info, status] = await Promise.all([
+          readContract('get_task', [i]),
+          readContract('get_status', [i])
+        ]);
+        if (info === "not found") continue;
+        const match = info.match(/Task: (.+) \| Status: .+ \| Reward: (.+)/);
+        if (match) {
+          allTasks.push({ id: i, desc: match[1], reward: match[2], status, rubric: '' });
+          if (status === 'completed') completed++;
+        }
+      } catch(e) {}
     }
     document.getElementById('statCompleted').textContent = completed;
     renderTasks();
@@ -588,3 +586,38 @@ async function loadTasks() {
     grid.innerHTML = '<div class="empty-state">Could not load tasks. Check connection.</div>';
   }
 }
+
+function renderTasks() {
+  const grid = document.getElementById('taskGrid');
+  const filtered = currentFilter === 'all' ? allTasks : allTasks.filter(t => t.status === currentFilter);
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="empty-state">' + (currentFilter === 'all' ? 'No tasks yet. Be the first to post one.' : 'No ' + currentFilter + ' tasks.') + '</div>';
+    return;
+  }
+  grid.innerHTML = filtered.slice().reverse().map(t => `
+    <div class="task-card" onclick="${t.status === 'open' ? `openSubmit(${t.id})` : ''}">
+      <div class="task-id">#${t.id}</div>
+      <div class="task-body">
+        <div class="task-desc">${t.desc}</div>
+      </div>
+      <div class="task-meta">
+        <div class="task-reward">${t.reward} GEN</div>
+        <div class="task-status status-${t.status}">${t.status.toUpperCase()}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + type + ' show';
+  setTimeout(() => t.classList.remove('show'), 4000);
+}
+
+(async function init() {
+  try { await loadTasks(); } catch(e) {}
+})();
+</script>
+</body>
+</html>
