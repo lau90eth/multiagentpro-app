@@ -178,7 +178,7 @@ footer { padding: 32px 0; border-top: 1px solid var(--border); display: flex; ju
     </div>
     <div class="nav-right">
       <div class="badge-live"><div class="dot-live"></div>BRADBURY TESTNET</div>
-      <button class="btn-wallet" id="walletBtn" onclick="(window.connectWallet||function(){setTimeout(()=>window.connectWallet&&window.connectWallet(),100)})()">Connect Wallet</button>
+      <button class="btn-wallet" id="walletBtn" onclick="connectWallet()">Connect Wallet</button>
     </div>
   </nav>
 
@@ -201,7 +201,7 @@ footer { padding: 32px 0; border-top: 1px solid var(--border); display: flex; ju
       </div>
     </div>
     <div class="hero-cta">
-      <button class="btn-primary" onclick="(window.openPostTask||function(){setTimeout(()=>window.openPostTask&&window.openPostTask(),100)})()">Post a Task</button>
+      <button class="btn-primary" onclick="openPostTask()">Post a Task</button>
       <button class="btn-outline" onclick="document.getElementById('taskSection').scrollIntoView({behavior:'smooth'})">Browse Tasks</button>
     </div>
   </div>
@@ -234,7 +234,7 @@ footer { padding: 32px 0; border-top: 1px solid var(--border); display: flex; ju
     <div class="section-header">
       <span class="section-label">Task Board</span>
       <div class="section-line"></div>
-      <button class="btn-primary" style="padding:8px 16px;font-size:11px" onclick="(window.openPostTask||function(){setTimeout(()=>window.openPostTask&&window.openPostTask(),100)})()">+ Post Task</button>
+      <button class="btn-primary" style="padding:8px 16px;font-size:11px" onclick="openPostTask()">+ Post Task</button>
     </div>
     <div class="tabs">
       <button class="tab active" onclick="filterTasks('all', this)">All</button>
@@ -279,7 +279,7 @@ footer { padding: 32px 0; border-top: 1px solid var(--border); display: flex; ju
   <footer>
     <div class="footer-left">
       Built by <a href="https://github.com/lau90eth" target="_blank" style="color:var(--accent2);text-decoration:none">lau90eth</a> · GenLayer Builders Program<br>
-      <span class="footer-contract">Contract: 0x8387523a7E499eF69EbB97De5f6F9AFa032cf902 · Bradbury Testnet</span>
+      <span class="footer-contract">Contract: 0x9F28ABaBF8b6DfB85FD5dA9D0e1CA3359BB548dA · Bradbury Testnet</span>
     </div>
     <div class="footer-links">
       <a href="https://github.com/lau90eth/multiagentpro" target="_blank">GitHub</a>
@@ -327,11 +327,8 @@ footer { padding: 32px 0; border-top: 1px solid var(--border); display: flex; ju
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<script src="https://esm.sh/genlayer-js@latest"></script>
-<script src="https://esm.sh/genlayer-js@latest/chains"></script>
-<script src="https://esm.sh/viem@latest"></script>
-<script>
-const CONTRACT = '0x8387523a7E499eF69EbB97De5f6F9AFa032cf902';
+<script type="module">
+const CONTRACT = '0x9F28ABaBF8b6DfB85FD5dA9D0e1CA3359BB548dA';
 const RPC = 'https://rpc-bradbury.genlayer.com';
 const EXPLORER = 'https://explorer-bradbury.genlayer.com/tx/';
 
@@ -404,7 +401,7 @@ function encodeCalldata(data) {
 
 async function initClient() {
   if (glClient) return glClient;
-  const { createClient } = window['genlayer-js'] || {};
+  const { createClient } = await import('https://esm.sh/genlayer-js@latest');
   const { testnetBradbury } = await import('https://esm.sh/genlayer-js@latest/chains');
   glClient = createClient({ chain: testnetBradbury });
   return glClient;
@@ -564,63 +561,26 @@ window.refreshTasks = async function() {
 async function loadTasks() {
   const grid = document.getElementById('taskGrid');
   try {
-    const count = await readContract('get_count', []);
-    const n = parseInt(count) || 0;
+    const [countStr, allStr] = await Promise.all([
+      readContract('get_count', []),
+      readContract('get_all', [])
+    ]);
+    const n = parseInt(countStr) || 0;
     document.getElementById('statTasks').textContent = n;
     allTasks = [];
     let completed = 0;
-    for (let i = 0; i < n; i++) {
-      try {
-        const [info, status] = await Promise.all([
-          readContract('get_task', [i]),
-          readContract('get_status', [i])
-        ]);
-        if (info === "not found") continue;
-        const match = info.match(/Task: (.+) \| Status: .+ \| Reward: (.+)/);
-        if (match) {
-          allTasks.push({ id: i, desc: match[1], reward: match[2], status, rubric: '' });
-          if (status === 'completed') completed++;
-        }
-      } catch(e) {}
+    if (allStr && allStr.trim() && allStr !== 'not found') {
+      allStr.split(';;').forEach((part, i) => {
+        if (!part.trim()) return;
+        const fields = part.split('|');
+        if (fields.length < 3) return;
+        allTasks.push({ id: i, desc: fields[0], status: fields[1], reward: fields[2], rubric: '' });
+        if (fields[1] === 'completed') completed++;
+      });
     }
     document.getElementById('statCompleted').textContent = completed;
     renderTasks();
   } catch(e) {
-    grid.innerHTML = '<div class="empty-state">Could not load tasks. Check connection.</div>';
+    grid.innerHTML = '<div class="empty-state">Could not load tasks.</div>';
   }
 }
-
-function renderTasks() {
-  const grid = document.getElementById('taskGrid');
-  const filtered = currentFilter === 'all' ? allTasks : allTasks.filter(t => t.status === currentFilter);
-  if (filtered.length === 0) {
-    grid.innerHTML = '<div class="empty-state">' + (currentFilter === 'all' ? 'No tasks yet. Be the first to post one.' : 'No ' + currentFilter + ' tasks.') + '</div>';
-    return;
-  }
-  grid.innerHTML = filtered.slice().reverse().map(t => `
-    <div class="task-card" onclick="${t.status === 'open' ? `openSubmit(${t.id})` : ''}">
-      <div class="task-id">#${t.id}</div>
-      <div class="task-body">
-        <div class="task-desc">${t.desc}</div>
-      </div>
-      <div class="task-meta">
-        <div class="task-reward">${t.reward} GEN</div>
-        <div class="task-status status-${t.status}">${t.status.toUpperCase()}</div>
-      </div>
-    </div>
-  `).join('');
-}
-
-function showToast(msg, type = 'success') {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast ' + type + ' show';
-  setTimeout(() => t.classList.remove('show'), 4000);
-}
-
-(async function init() {
-  try { await loadTasks(); } catch(e) {}
-})();
-</script>
-</body>
-</html>
