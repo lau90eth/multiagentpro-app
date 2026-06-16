@@ -572,6 +572,7 @@ async function loadTasks() {
           readContract('get_task', [i]),
           readContract('get_status', [i])
         ]);
+        if (info === "not found") continue;
         const match = info.match(/Task: (.+) \| Status: .+ \| Reward: (.+)/);
         if (match) {
           allTasks.push({ id: i, desc: match[1], reward: match[2], status, rubric: '' });
