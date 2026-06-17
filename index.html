@@ -236,7 +236,7 @@ function decodeResult(hex){
 function callContract(method,args){
   var cd=encodeCalldata({method:method,args:args||[]});
   var hex=toHex(cd);
-  return fetch(RPC,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',method:'gen_call',params:[{to:CONTRACT,data:hex}],id:1})})
+  return fetch(RPC,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',method:'gen_call',params:[{to:CONTRACT,data:hex,type:'read'}],id:1})})
     .then(function(r){return r.json();})
     .then(function(j){if(j.error)throw new Error(j.error.message);return decodeResult(j.result);});
 }
