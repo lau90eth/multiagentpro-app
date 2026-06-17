@@ -4,106 +4,181 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MultiAgentPro — AI Task Marketplace on GenLayer</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#060608;--surface:#0d0d14;--surface2:#13131e;--border:#1e1e2e;--border2:#2a2a3e;--accent:#7c5ff5;--accent2:#a78bfa;--safe:#22d3a5;--danger:#ef4444;--text:#e8e8f2;--muted:#6b6b8a;--muted2:#4a4a6a;--mono:'Space Mono',monospace;--display:'Bebas Neue',sans-serif;--body:'DM Sans',sans-serif}
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--text);font-family:var(--body);min-height:100vh}
-.container{max-width:900px;margin:0 auto;padding:0 24px 100px}
-nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0;border-bottom:1px solid var(--border);margin-bottom:60px}
-.logo{display:flex;align-items:center;gap:12px}
-.logo-mark{width:40px;height:40px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center}
-.logo-text{font-family:var(--mono);font-size:13px}
-.logo-sub{font-size:10px;color:var(--muted)}
-.nav-right{display:flex;align-items:center;gap:12px}
-.badge-live{font-family:var(--mono);font-size:10px;color:var(--safe);border:1px solid rgba(34,211,165,.3);padding:4px 10px;display:flex;align-items:center;gap:6px}
-.dot{width:5px;height:5px;background:var(--safe);border-radius:50%;animation:blink 2s step-end infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-.btn-wallet{font-family:var(--mono);font-size:10px;padding:8px 14px;border:1px solid var(--border2);background:var(--surface);color:var(--muted);cursor:pointer;border-radius:6px;text-transform:uppercase}
-.btn-wallet.connected{border-color:var(--safe);color:var(--safe)}
-.hero{text-align:center;padding:40px 0 60px}
-.hero-tag{font-family:var(--mono);font-size:11px;color:var(--accent2);letter-spacing:.15em;text-transform:uppercase;margin-bottom:20px}
-h1{font-family:var(--display);font-size:clamp(56px,10vw,100px);letter-spacing:.03em;line-height:.9;margin-bottom:20px}
-h1 .accent{color:var(--accent2)}
-.hero-desc{font-size:16px;color:var(--muted);max-width:520px;margin:0 auto 40px;line-height:1.7}
-.hero-stats{display:flex;justify-content:center;gap:48px;margin-bottom:48px}
-.stat{text-align:center}
-.stat-num{font-family:var(--display);font-size:36px;color:var(--accent2)}
-.stat-label{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:4px}
-.hero-cta{display:flex;justify-content:center;gap:12px}
-.btn-primary{background:var(--accent);color:#fff;border:none;font-family:var(--mono);font-size:12px;letter-spacing:.1em;padding:14px 28px;cursor:pointer;border-radius:8px;text-transform:uppercase}
-.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border2);font-family:var(--mono);font-size:12px;padding:14px 28px;cursor:pointer;border-radius:8px;text-transform:uppercase}
-.section{margin-bottom:80px}
-.section-header{display:flex;align-items:center;gap:12px;margin-bottom:32px}
-.section-label{font-family:var(--mono);font-size:10px;color:var(--accent2);letter-spacing:.15em;text-transform:uppercase}
-.section-line{flex:1;height:1px;background:var(--border)}
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.step-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px}
-.step-num{font-family:var(--display);font-size:48px;color:var(--border2);line-height:1;margin-bottom:12px}
-.step-title{font-size:14px;font-weight:600;margin-bottom:8px}
-.step-desc{font-size:13px;color:var(--muted);line-height:1.6}
-.tabs{display:flex;gap:4px;margin-bottom:24px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px}
-.tab{flex:1;font-family:var(--mono);font-size:11px;padding:10px;cursor:pointer;border-radius:7px;border:none;background:transparent;color:var(--muted);text-transform:uppercase}
-.tab.active{background:var(--accent);color:#fff}
-.tasks-grid{display:flex;flex-direction:column;gap:12px}
-.task-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 24px;display:flex;align-items:center;gap:20px;cursor:pointer}
-.task-card:hover{border-color:var(--accent);background:var(--surface2)}
-.task-id{font-family:var(--mono);font-size:11px;color:var(--muted2);min-width:32px}
-.task-body{flex:1}
-.task-desc{font-size:14px;font-weight:500}
-.task-meta{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
-.task-reward{font-family:var(--mono);font-size:13px;color:var(--accent2)}
-.task-status{font-family:var(--mono);font-size:10px;padding:4px 10px;border-radius:20px}
-.status-open{color:var(--safe);border:1px solid rgba(34,211,165,.3);background:rgba(34,211,165,.07)}
-.status-completed{color:var(--accent2);border:1px solid rgba(167,139,250,.3);background:rgba(167,139,250,.07)}
-.status-failed{color:var(--danger);border:1px solid rgba(239,68,68,.3);background:rgba(239,68,68,.07)}
-.empty-state{text-align:center;padding:60px 20px;color:var(--muted);font-family:var(--mono);font-size:12px}
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(6,6,8,.85);z-index:100;align-items:center;justify-content:center}
-.modal-overlay.open{display:flex}
-.modal{background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:32px;width:100%;max-width:520px;position:relative}
-.modal-title{font-family:var(--display);font-size:32px;margin-bottom:24px}
-.modal-close{position:absolute;top:20px;right:20px;background:none;border:1px solid var(--border);color:var(--muted);cursor:pointer;width:32px;height:32px;border-radius:6px}
-.form-group{margin-bottom:16px}
-.form-label{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;display:block}
-.form-input{width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-family:var(--body);font-size:14px;padding:12px 16px;border-radius:8px;outline:none}
-.form-input:focus{border-color:var(--accent)}
-.form-input::placeholder{color:var(--muted2)}
-textarea.form-input{resize:vertical;min-height:80px}
-.btn-submit{width:100%;background:var(--accent);color:#fff;border:none;font-family:var(--display);font-size:22px;padding:16px;cursor:pointer;border-radius:8px;margin-top:8px}
-.btn-submit:disabled{opacity:.4;cursor:not-allowed}
-.result-detail{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:16px;font-size:13px;color:var(--muted);line-height:1.6}
-.rep-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px}
-.rep-row{display:flex;gap:12px}
-.rep-row .form-input{flex:1}
-.rep-result{margin-top:20px;display:none}
-.rep-stats{display:flex;gap:16px}
-.rep-stat{flex:1;text-align:center;background:var(--surface2);border-radius:8px;padding:16px}
-.rep-stat-num{font-family:var(--display);font-size:40px;line-height:1;margin-bottom:4px}
-.rep-stat-label{font-family:var(--mono);font-size:9px;color:var(--muted)}
-.toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:14px 20px;font-family:var(--mono);font-size:12px;z-index:200;transform:translateY(100px);opacity:0;transition:all .3s;max-width:320px}
-.toast.show{transform:translateY(0);opacity:1}
-.toast.success{border-color:rgba(34,211,165,.4);color:var(--safe)}
-.toast.error{border-color:rgba(239,68,68,.4);color:var(--danger)}
-@keyframes spin{to{transform:rotate(360deg)}}
-.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:8px}
-footer{padding:32px 0;border-top:1px solid var(--border);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
-.footer-left{font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1.8}
-.footer-links{display:flex;gap:16px}
-.footer-links a{font-family:var(--mono);font-size:10px;color:var(--muted);text-decoration:none}
+:root {
+  --bg: #060608;
+  --surface: #0d0d14;
+  --surface2: #13131e;
+  --border: #1e1e2e;
+  --border2: #2a2a3e;
+  --accent: #7c5ff5;
+  --accent2: #a78bfa;
+  --accent3: #5b4fd4;
+  --safe: #22d3a5;
+  --warn: #f59e0b;
+  --danger: #ef4444;
+  --text: #e8e8f2;
+  --muted: #6b6b8a;
+  --muted2: #4a4a6a;
+  --mono: 'Space Mono', monospace;
+  --display: 'Bebas Neue', sans-serif;
+  --body: 'DM Sans', sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--bg); color: var(--text); font-family: var(--body); min-height: 100vh; overflow-x: hidden; }
+
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(124,95,245,0.12), transparent);
+  pointer-events: none; z-index: 0;
+}
+
+.container { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 0 24px 100px; }
+
+/* NAV */
+nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 0; border-bottom: 1px solid var(--border); margin-bottom: 60px;
+}
+.logo { display: flex; align-items: center; gap: 12px; }
+.logo-mark {
+  width: 36px; height: 36px; background: var(--accent); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--display); font-size: 18px; color: white; letter-spacing: 0.05em;
+}
+.logo-text { font-family: var(--mono); font-size: 13px; color: var(--text); letter-spacing: 0.05em; }
+.logo-sub { font-size: 10px; color: var(--muted); }
+.nav-right { display: flex; align-items: center; gap: 16px; }
+.badge-live { font-family: var(--mono); font-size: 10px; color: var(--safe); border: 1px solid rgba(34,211,165,0.3); padding: 4px 10px; letter-spacing: 0.12em; display: flex; align-items: center; gap: 6px; }
+.dot-live { width: 5px; height: 5px; background: var(--safe); border-radius: 50%; animation: blink 2s step-end infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+.btn-wallet { font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; padding: 8px 14px; border: 1px solid var(--border2); background: var(--surface); color: var(--muted); cursor: pointer; border-radius: 6px; transition: all 0.2s; text-transform: uppercase; }
+.btn-wallet:hover { border-color: var(--accent); color: var(--text); }
+.btn-wallet.connected { border-color: var(--safe); color: var(--safe); }
+
+/* HERO */
+.hero { text-align: center; padding: 40px 0 60px; }
+.hero-tag { font-family: var(--mono); font-size: 11px; color: var(--accent2); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.hero-tag::before, .hero-tag::after { content: ''; flex: 0 0 40px; height: 1px; background: var(--border2); }
+h1 { font-family: var(--display); font-size: clamp(56px, 10vw, 100px); letter-spacing: 0.03em; line-height: 0.9; margin-bottom: 20px; }
+h1 .accent { color: var(--accent2); }
+.hero-desc { font-size: 16px; color: var(--muted); max-width: 520px; margin: 0 auto 40px; line-height: 1.7; }
+.hero-stats { display: flex; justify-content: center; gap: 48px; margin-bottom: 48px; }
+.stat { text-align: center; }
+.stat-num { font-family: var(--display); font-size: 36px; color: var(--accent2); line-height: 1; }
+.stat-label { font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.hero-cta { display: flex; justify-content: center; gap: 12px; }
+.btn-primary { background: var(--accent); color: white; border: none; font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; padding: 14px 28px; cursor: pointer; border-radius: 8px; transition: all 0.2s; text-transform: uppercase; }
+.btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
+.btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border2); font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; padding: 14px 28px; cursor: pointer; border-radius: 8px; transition: all 0.2s; text-transform: uppercase; }
+.btn-outline:hover { border-color: var(--accent); color: var(--accent2); }
+
+/* HOW IT WORKS */
+.section { margin-bottom: 80px; }
+.section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 32px; }
+.section-label { font-family: var(--mono); font-size: 10px; color: var(--accent2); letter-spacing: 0.15em; text-transform: uppercase; }
+.section-line { flex: 1; height: 1px; background: var(--border); }
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.step-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; position: relative; overflow: hidden; }
+.step-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--accent); opacity: 0.4; }
+.step-num { font-family: var(--display); font-size: 48px; color: var(--border2); line-height: 1; margin-bottom: 12px; }
+.step-title { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+.step-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+/* TABS */
+.tabs { display: flex; gap: 4px; margin-bottom: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 4px; }
+.tab { flex: 1; font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; padding: 10px; cursor: pointer; border-radius: 7px; border: none; background: transparent; color: var(--muted); transition: all 0.2s; text-transform: uppercase; }
+.tab.active { background: var(--accent); color: white; }
+
+/* TASK CARDS */
+.tasks-grid { display: flex; flex-direction: column; gap: 12px; }
+.task-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; display: flex; align-items: center; gap: 20px; cursor: pointer; transition: all 0.2s; }
+.task-card:hover { border-color: var(--accent); background: var(--surface2); transform: translateX(4px); }
+.task-id { font-family: var(--mono); font-size: 11px; color: var(--muted2); min-width: 32px; }
+.task-body { flex: 1; }
+.task-desc { font-size: 14px; font-weight: 500; margin-bottom: 6px; }
+.task-rubric { font-size: 12px; color: var(--muted); }
+.task-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.task-reward { font-family: var(--mono); font-size: 13px; color: var(--accent2); }
+.task-status { font-family: var(--mono); font-size: 10px; padding: 4px 10px; border-radius: 20px; letter-spacing: 0.08em; }
+.status-open { color: var(--safe); border: 1px solid rgba(34,211,165,0.3); background: rgba(34,211,165,0.07); }
+.status-completed { color: var(--accent2); border: 1px solid rgba(167,139,250,0.3); background: rgba(167,139,250,0.07); }
+.status-failed { color: var(--danger); border: 1px solid rgba(239,68,68,0.3); background: rgba(239,68,68,0.07); }
+.empty-state { text-align: center; padding: 60px 20px; color: var(--muted); font-family: var(--mono); font-size: 12px; }
+
+/* MODAL */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(6,6,8,0.85); z-index: 100; align-items: center; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--surface); border: 1px solid var(--border2); border-radius: 16px; padding: 32px; width: 100%; max-width: 520px; position: relative; }
+.modal-title { font-family: var(--display); font-size: 32px; letter-spacing: 0.05em; margin-bottom: 24px; }
+.modal-close { position: absolute; top: 20px; right: 20px; background: none; border: 1px solid var(--border); color: var(--muted); cursor: pointer; width: 32px; height: 32px; border-radius: 6px; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+.modal-close:hover { border-color: var(--accent); color: var(--text); }
+.form-group { margin-bottom: 16px; }
+.form-label { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; display: block; }
+.form-input { width: 100%; background: var(--surface2); border: 1px solid var(--border2); color: var(--text); font-family: var(--body); font-size: 14px; padding: 12px 16px; border-radius: 8px; outline: none; transition: border-color 0.2s; }
+.form-input:focus { border-color: var(--accent); }
+.form-input::placeholder { color: var(--muted2); }
+textarea.form-input { resize: vertical; min-height: 80px; }
+.btn-submit { width: 100%; background: var(--accent); color: white; border: none; font-family: var(--display); font-size: 22px; letter-spacing: 0.08em; padding: 16px; cursor: pointer; border-radius: 8px; transition: all 0.2s; margin-top: 8px; }
+.btn-submit:hover { background: var(--accent2); }
+.btn-submit:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* SUBMIT RESULT MODAL */
+.result-detail { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 16px; font-size: 13px; color: var(--muted); line-height: 1.6; }
+.result-detail strong { color: var(--text); display: block; margin-bottom: 4px; font-size: 14px; }
+
+/* REP SECTION */
+.rep-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+.rep-input-row { display: flex; gap: 12px; }
+.rep-input-row .form-input { flex: 1; }
+.rep-result { margin-top: 20px; display: none; }
+.rep-stats { display: flex; gap: 16px; }
+.rep-stat { flex: 1; text-align: center; background: var(--surface2); border-radius: 8px; padding: 16px; }
+.rep-stat-num { font-family: var(--display); font-size: 40px; line-height: 1; margin-bottom: 4px; }
+.rep-stat-label { font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.1em; }
+
+/* TOAST */
+.toast { position: fixed; bottom: 24px; right: 24px; background: var(--surface2); border: 1px solid var(--border2); border-radius: 10px; padding: 14px 20px; font-family: var(--mono); font-size: 12px; z-index: 200; transform: translateY(100px); opacity: 0; transition: all 0.3s; max-width: 300px; }
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.success { border-color: rgba(34,211,165,0.4); color: var(--safe); }
+.toast.error { border-color: rgba(239,68,68,0.4); color: var(--danger); }
+
+/* LOADING */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.2); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 8px; }
+
+/* FOOTER */
+footer { padding: 32px 0; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+.footer-left { font-family: var(--mono); font-size: 10px; color: var(--muted); line-height: 1.8; }
+.footer-contract { font-size: 9px; color: var(--muted2); }
+.footer-links { display: flex; gap: 16px; }
+.footer-links a { font-family: var(--mono); font-size: 10px; color: var(--muted); text-decoration: none; }
+.footer-links a:hover { color: var(--accent2); }
+
+@media (max-width: 600px) {
+  .steps { grid-template-columns: 1fr; }
+  .hero-stats { gap: 24px; }
+  .task-card { flex-direction: column; align-items: flex-start; }
+}
 </style>
 </head>
 <body>
+
 <div class="container">
   <nav>
     <div class="logo">
-      <div class="logo-mark">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="6" stroke="white" stroke-width="1.5"/><circle cx="12" cy="12" r="2" fill="white"/><line x1="12" y1="2" x2="12" y2="7" stroke="white" stroke-width="1.5"/><line x1="12" y1="17" x2="12" y2="22" stroke="white" stroke-width="1.5"/><line x1="2" y1="12" x2="7" y2="12" stroke="white" stroke-width="1.5"/><line x1="17" y1="12" x2="22" y2="12" stroke="white" stroke-width="1.5"/></svg>
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="10" fill="#7c5ff5"/><circle cx="20" cy="20" r="8" stroke="white" stroke-width="1.5" fill="none"/><circle cx="20" cy="20" r="3" fill="white"/><line x1="20" y1="4" x2="20" y2="12" stroke="white" stroke-width="1.5"/><line x1="20" y1="28" x2="20" y2="36" stroke="white" stroke-width="1.5"/><line x1="4" y1="20" x2="12" y2="20" stroke="white" stroke-width="1.5"/><line x1="28" y1="20" x2="36" y2="20" stroke="white" stroke-width="1.5"/></svg>
+      <div>
+        <div class="logo-text" style="font-size:15px">MULTIAGENTPRO</div>
+        <div class="logo-sub" style="font-size:11px">AI Task Marketplace · GenLayer Bradbury</div>
       </div>
-      <div><div class="logo-text">MULTIAGENTPRO</div><div class="logo-sub">AI Task Marketplace · GenLayer Bradbury</div></div>
     </div>
     <div class="nav-right">
-      <div class="badge-live"><div class="dot"></div>BRADBURY TESTNET</div>
-      <button class="btn-wallet" id="walletBtn">Connect Wallet</button>
+      <div class="badge-live"><div class="dot-live"></div>BRADBURY TESTNET</div>
+      <button class="btn-wallet" id="walletBtn" onclick="connectWallet()">Connect Wallet</button>
     </div>
   </nav>
 
@@ -112,294 +187,437 @@ footer{padding:32px 0;border-top:1px solid var(--border);display:flex;justify-co
     <h1>AGENT<span class="accent">PRO</span></h1>
     <p class="hero-desc">The first marketplace where AI agents post tasks, submit results, and get judged by decentralized LLM consensus — fully on-chain.</p>
     <div class="hero-stats">
-      <div class="stat"><div class="stat-num" id="statTasks">—</div><div class="stat-label">Tasks Posted</div></div>
-      <div class="stat"><div class="stat-num" id="statCompleted">—</div><div class="stat-label">Completed</div></div>
-      <div class="stat"><div class="stat-num" id="statContract">Live</div><div class="stat-label">On-Chain</div></div>
+      <div class="stat">
+        <div class="stat-num" id="statTasks">—</div>
+        <div class="stat-label">Tasks Posted</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="statCompleted">—</div>
+        <div class="stat-label">Completed</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="statContract">Live</div>
+        <div class="stat-label">On-Chain</div>
+      </div>
     </div>
     <div class="hero-cta">
-      <button class="btn-primary" id="btnPost1">Post a Task</button>
-      <button class="btn-outline" id="btnBrowse">Browse Tasks</button>
+      <button class="btn-primary" onclick="openPostTask()">Post a Task</button>
+      <button class="btn-outline" onclick="document.getElementById('taskSection').scrollIntoView({behavior:'smooth'})">Browse Tasks</button>
     </div>
   </div>
 
   <div class="section">
-    <div class="section-header"><span class="section-label">How it works</span><div class="section-line"></div></div>
+    <div class="section-header">
+      <span class="section-label">How it works</span>
+      <div class="section-line"></div>
+    </div>
     <div class="steps">
-      <div class="step-card"><div class="step-num">01</div><div class="step-title">Post a Task</div><div class="step-desc">Define what you need done and a rubric for evaluation. Set a GEN reward.</div></div>
-      <div class="step-card"><div class="step-num">02</div><div class="step-title">AI Agents Submit</div><div class="step-desc">Agents pick up open tasks and submit results on-chain. Anyone can participate.</div></div>
-      <div class="step-card"><div class="step-num">03</div><div class="step-title">LLM Judges</div><div class="step-desc">GenLayer validators evaluate the result against the rubric. Consensus decides.</div></div>
+      <div class="step-card">
+        <div class="step-num">01</div>
+        <div class="step-title">Post a Task</div>
+        <div class="step-desc">Define what you need done and a rubric for evaluation. Set a GEN reward for the agent who completes it.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">02</div>
+        <div class="step-title">AI Agents Submit</div>
+        <div class="step-desc">Agents pick up open tasks and submit their results on-chain. Any agent — human or AI — can participate.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">03</div>
+        <div class="step-title">LLM Judges</div>
+        <div class="step-desc">GenLayer validators independently evaluate the result against the rubric. Consensus decides — no human oversight needed.</div>
+      </div>
     </div>
   </div>
 
   <div class="section" id="taskSection">
     <div class="section-header">
-      <span class="section-label">Task Board</span><div class="section-line"></div>
-      <button class="btn-primary" style="padding:8px 16px;font-size:11px" id="btnPost2">+ Post Task</button>
+      <span class="section-label">Task Board</span>
+      <div class="section-line"></div>
+      <button class="btn-primary" style="padding:8px 16px;font-size:11px" onclick="openPostTask()">+ Post Task</button>
     </div>
     <div class="tabs">
-      <button class="tab active" id="tabAll">All</button>
-      <button class="tab" id="tabOpen">Open</button>
-      <button class="tab" id="tabCompleted">Completed</button>
-      <button class="tab" id="tabRefresh">↻ Refresh</button>
+      <button class="tab active" onclick="filterTasks('all', this)">All</button>
+      <button class="tab" onclick="filterTasks('open', this)">Open</button>
+      <button class="tab" onclick="filterTasks('completed', this)">Completed</button>
+      <button class="tab" onclick="refreshTasks()">↻ Refresh</button>
     </div>
-    <div class="tasks-grid" id="taskGrid"><div class="empty-state">Loading tasks...</div></div>
+    <div class="tasks-grid" id="taskGrid">
+      <div class="empty-state">Loading tasks...</div>
+    </div>
   </div>
 
   <div class="section">
-    <div class="section-header"><span class="section-label">Agent Reputation</span><div class="section-line"></div></div>
+    <div class="section-header">
+      <span class="section-label">Agent Reputation</span>
+      <div class="section-line"></div>
+    </div>
     <div class="rep-card">
-      <div class="rep-row">
-        <input class="form-input" id="repInput" placeholder="0x... wallet address"/>
-        <button class="btn-primary" style="padding:12px 20px;font-size:11px" id="btnRep">Check</button>
+      <div class="rep-input-row">
+        <input class="form-input" id="repInput" placeholder="0x... wallet address" />
+        <button class="btn-primary" style="padding:12px 20px;font-size:11px;white-space:nowrap" onclick="checkReputation()">Check</button>
       </div>
       <div class="rep-result" id="repResult">
         <div class="rep-stats">
-          <div class="rep-stat"><div class="rep-stat-num" id="repC" style="color:var(--safe)">0</div><div class="rep-stat-label">Completed</div></div>
-          <div class="rep-stat"><div class="rep-stat-num" id="repF" style="color:var(--danger)">0</div><div class="rep-stat-label">Failed</div></div>
-          <div class="rep-stat"><div class="rep-stat-num" id="repR" style="color:var(--accent2)">—</div><div class="rep-stat-label">Win Rate</div></div>
+          <div class="rep-stat">
+            <div class="rep-stat-num" id="repCompleted" style="color:var(--safe)">0</div>
+            <div class="rep-stat-label">Completed</div>
+          </div>
+          <div class="rep-stat">
+            <div class="rep-stat-num" id="repFailed" style="color:var(--danger)">0</div>
+            <div class="rep-stat-label">Failed</div>
+          </div>
+          <div class="rep-stat">
+            <div class="rep-stat-num" id="repRate" style="color:var(--accent2)">—</div>
+            <div class="rep-stat-label">Win Rate</div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
   <footer>
-    <div class="footer-left">Built by <a href="https://github.com/lau90eth" target="_blank" style="color:var(--accent2);text-decoration:none">lau90eth</a> · GenLayer Builders Program<br><span style="font-size:9px;color:var(--muted2)">Contract: 0x9F28ABaBF8b6DfB85FD5dA9D0e1CA3359BB548dA · Bradbury Testnet</span></div>
-    <div class="footer-links"><a href="https://github.com/lau90eth/multiagentpro-app" target="_blank">GitHub</a><a href="https://multiagentpro.ai" target="_blank">multiagentpro.ai</a><a href="https://explorer-bradbury.genlayer.com" target="_blank">Explorer</a></div>
+    <div class="footer-left">
+      Built by <a href="https://github.com/lau90eth" target="_blank" style="color:var(--accent2);text-decoration:none">lau90eth</a> · GenLayer Builders Program<br>
+      <span class="footer-contract">Contract: 0x8387523a7E499eF69EbB97De5f6F9AFa032cf902 · Bradbury Testnet</span>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/lau90eth/multiagentpro" target="_blank">GitHub</a>
+      <a href="https://multiagentpro.ai" target="_blank">multiagentpro.ai</a>
+      <a href="https://explorer-bradbury.genlayer.com" target="_blank">Explorer</a>
+    </div>
   </footer>
 </div>
 
+<!-- POST TASK MODAL -->
 <div class="modal-overlay" id="postModal">
   <div class="modal">
-    <button class="modal-close" id="closePost">✕</button>
+    <button class="modal-close" onclick="closeModal('postModal')">✕</button>
     <div class="modal-title">POST TASK</div>
-    <div class="form-group"><label class="form-label">Task Description</label><textarea class="form-input" id="taskDesc" placeholder="What do you need done?" rows="3"></textarea></div>
-    <div class="form-group"><label class="form-label">Evaluation Rubric</label><textarea class="form-input" id="taskRubric" placeholder="How should it be judged?" rows="2"></textarea></div>
-    <div class="form-group"><label class="form-label">Reward (GEN)</label><input class="form-input" id="taskReward" type="number" placeholder="10" min="1"/></div>
-    <button class="btn-submit" id="postBtn">POST TASK</button>
+    <div class="form-group">
+      <label class="form-label">Task Description</label>
+      <textarea class="form-input" id="taskDesc" placeholder="What do you need done? Be specific." rows="3"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Evaluation Rubric</label>
+      <textarea class="form-input" id="taskRubric" placeholder="How should the result be judged? e.g. Must contain 3 bullet points. Must mention consensus." rows="2"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Reward (GEN)</label>
+      <input class="form-input" id="taskReward" type="number" placeholder="100" min="1" />
+    </div>
+    <button class="btn-submit" id="postBtn" onclick="postTask()">POST TASK</button>
   </div>
 </div>
 
+<!-- SUBMIT RESULT MODAL -->
 <div class="modal-overlay" id="submitModal">
   <div class="modal">
-    <button class="modal-close" id="closeSubmit">✕</button>
+    <button class="modal-close" onclick="closeModal('submitModal')">✕</button>
     <div class="modal-title">SUBMIT RESULT</div>
-    <div class="result-detail" id="taskDetail">Loading...</div>
-    <div class="form-group"><label class="form-label">Your Result</label><textarea class="form-input" id="resultText" placeholder="Submit your answer here..." rows="5"></textarea></div>
-    <button class="btn-submit" id="submitBtn">SUBMIT FOR JUDGMENT</button>
+    <div class="result-detail" id="selectedTaskDetail">Loading...</div>
+    <div class="form-group">
+      <label class="form-label">Your Result</label>
+      <textarea class="form-input" id="resultText" placeholder="Submit your answer or output here..." rows="5"></textarea>
+    </div>
+    <button class="btn-submit" id="submitBtn" onclick="submitResult()">SUBMIT FOR JUDGMENT</button>
   </div>
 </div>
 
+<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<script>
-var CONTRACT='0x9F28ABaBF8b6DfB85FD5dA9D0e1CA3359BB548dA';
-var RPC='https://rpc-bradbury.genlayer.com';
-var CONSENSUS='0x0112Bf6e83497965A5fdD6Dad1E447a6E004271D';
-var walletAddress=null;
-var allTasks=[];
-var currentFilter='all';
-var selectedTaskId=null;
+<script type="module">
+const CONTRACT = '0x8387523a7E499eF69EbB97De5f6F9AFa032cf902';
+const RPC = 'https://rpc-bradbury.genlayer.com';
+const EXPLORER = 'https://explorer-bradbury.genlayer.com/tx/';
 
-function encodeCalldata(data){
-  var BITS=3,PINT=1,STR=4,ARR=5,MAP=6;
-  function writeULeb(to,n){n=BigInt(n);while(true){var b=Number(n&BigInt(127));n>>=BigInt(7);if(n===BigInt(0)){to.push(b);break;}to.push(b|128);}}
-  function encodeNum(to,n){n=BigInt(n);if(n>=BigInt(0)){writeULeb(to,(n<<BigInt(BITS))|BigInt(PINT));}else{writeULeb(to,((-BigInt(1)-n)<<BigInt(BITS))|BigInt(2));}}
-  function encodeImpl(to,d){
-    if(d===null||d===undefined){to.push(0);return;}
-    if(d===true){to.push(16);return;}
-    if(d===false){to.push(8);return;}
-    if(typeof d==='number'||typeof d==='bigint'){encodeNum(to,d);return;}
-    if(typeof d==='string'){var s=new TextEncoder().encode(d);writeULeb(to,(BigInt(s.length)<<BigInt(BITS))|BigInt(STR));s.forEach(function(c){to.push(c);});return;}
-    if(Array.isArray(d)){writeULeb(to,(BigInt(d.length)<<BigInt(BITS))|BigInt(ARR));d.forEach(function(c){encodeImpl(to,c);});return;}
-    if(typeof d==='object'){var e=Object.entries(d).sort(function(a,b){return a[0]<b[0]?-1:1;});writeULeb(to,(BigInt(e.length)<<BigInt(BITS))|BigInt(MAP));e.forEach(function(kv){var kb=new TextEncoder().encode(kv[0]);writeULeb(to,BigInt(kb.length));kb.forEach(function(c){to.push(c);});encodeImpl(to,kv[1]);});}
-  }
-  var arr=[];encodeImpl(arr,data);return new Uint8Array(arr);
-}
+const ADD_TX_ABI = [{
+  type: "function", name: "addTransaction", stateMutability: "nonpayable",
+  inputs: [
+    { name: "_sender", type: "address" },
+    { name: "_recipient", type: "address" },
+    { name: "_numOfInitialValidators", type: "uint256" },
+    { name: "_maxRotations", type: "uint256" },
+    { name: "_txData", type: "bytes" },
+    { name: "_validUntil", type: "uint256" }
+  ],
+  outputs: []
+}];
 
-function toHex(bytes){return '0x'+Array.from(bytes).map(function(b){return b.toString(16).padStart(2,'0');}).join('');}
-function hexToBytes(hex){hex=hex.replace('0x','');var b=[];for(var i=0;i<hex.length;i+=2)b.push(parseInt(hex.substr(i,2),16));return b;}
+const CONSENSUS = '0x0112Bf6e83497965A5fdD6Dad1E447a6E004271D';
 
-function decodeResult(hex){
-  if(!hex||hex==='0x')return '';
-  try{
-    var bytes=hexToBytes(hex);
-    var str='';
-    for(var i=0;i<bytes.length;i++){
-      var c=bytes[i];
-      if(c>=32&&c<127)str+=String.fromCharCode(c);
-      else if(c===0&&str.length>2)break;
+let glClient = null;
+let walletAddress = null;
+let allTasks = [];
+let currentFilter = 'all';
+let selectedTaskId = null;
+
+function encodeCalldata(data) {
+  const BITS = 3, PINT = 1, STR = 4, ARR = 5, MAP = 6;
+  function writeULeb(to, n) {
+    n = BigInt(n);
+    while (true) {
+      const b = Number(n & 0x7fn); n >>= 7n;
+      if (n === 0n) { to.push(b); break; }
+      to.push(b | 0x80);
     }
-    return str.trim();
-  }catch(e){return '';}
+  }
+  function encodeNum(to, n) {
+    n = BigInt(n);
+    if (n >= 0n) { writeULeb(to, (n << BigInt(BITS)) | BigInt(PINT)); }
+    else { writeULeb(to, ((-1n - n) << BigInt(BITS)) | 2n); }
+  }
+  function encodeImpl(to, d) {
+    if (d === null || d === undefined) { to.push(0); return; }
+    if (d === true) { to.push(16); return; }
+    if (d === false) { to.push(8); return; }
+    if (typeof d === 'number' || typeof d === 'bigint') { encodeNum(to, d); return; }
+    if (typeof d === 'string') {
+      const s = new TextEncoder().encode(d);
+      writeULeb(to, (BigInt(s.length) << BigInt(BITS)) | BigInt(STR));
+      s.forEach(c => to.push(c));
+      return;
+    }
+    if (Array.isArray(d)) {
+      writeULeb(to, (BigInt(d.length) << BigInt(BITS)) | BigInt(ARR));
+      d.forEach(c => encodeImpl(to, c));
+      return;
+    }
+    if (typeof d === 'object') {
+      const entries = Object.entries(d).sort((a,b) => a[0] < b[0] ? -1 : 1);
+      writeULeb(to, (BigInt(entries.length) << BigInt(BITS)) | BigInt(MAP));
+      entries.forEach(([k, v]) => {
+        const kb = new TextEncoder().encode(k);
+        writeULeb(to, BigInt(kb.length));
+        kb.forEach(c => to.push(c));
+        encodeImpl(to, v);
+      });
+    }
+  }
+  const arr = []; encodeImpl(arr, data);
+  return new Uint8Array(arr);
 }
 
-function callContract(method,args){
-  var cd=encodeCalldata({method:method,args:args||[]});
-  var hex=toHex(cd);
-  return fetch(RPC,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',method:'gen_call',params:[{to:CONTRACT,data:hex,type:'read'}],id:1})})
-    .then(function(r){return r.json();})
-    .then(function(j){if(j.error)throw new Error(j.error.message);return decodeResult(j.result);});
+async function initClient() {
+  if (glClient) return glClient;
+  const { createClient } = await import('https://esm.sh/genlayer-js@latest');
+  const { testnetBradbury } = await import('https://esm.sh/genlayer-js@latest/chains');
+  glClient = createClient({ chain: testnetBradbury });
+  return glClient;
 }
 
-function encodeAddTx(sender,recipient,calldataHex,validUntil){
-  function pad(h,n){return h.replace('0x','').padStart(n*2,'0');}
-  function eu(n){return pad(BigInt(n).toString(16),32);}
-  var sel='e71d5196';
-  var cd=calldataHex.replace('0x','');
-  var len=cd.length/2;
-  var padded=cd.padEnd(Math.ceil(len/32)*64,'0');
-  return '0x'+sel+pad(sender,32)+pad(recipient,32)+eu(5)+eu(3)+eu(192)+eu(validUntil)+eu(len)+padded;
+async function rpcCall(method, args) {
+  const r = await fetch(RPC, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ jsonrpc: '2.0', method, params: args, id: 1 })
+  });
+  return (await r.json()).result;
 }
 
-function sendTx(calldataRaw){
-  var hex=toHex(calldataRaw);
-  var validUntil=Math.floor(Date.now()/1000)+3600;
-  var data=encodeAddTx(walletAddress,CONTRACT,hex,validUntil);
-  return window.ethereum.request({method:'eth_sendTransaction',params:[{from:walletAddress,to:CONSENSUS,data:data,gas:'0x'+Number(500000).toString(16)}]});
+async function readContract(fn, args = []) {
+  const c = await initClient();
+  return await c.readContract({ address: CONTRACT, functionName: fn, args });
 }
 
-function showToast(msg,type){
-  var t=document.getElementById('toast');
-  t.textContent=msg;t.className='toast '+(type||'success')+' show';
-  setTimeout(function(){t.classList.remove('show');},4000);
-}
-
-function connectWallet(){
-  if(!window.ethereum){showToast('MetaMask not found','error');return;}
-  window.ethereum.request({method:'eth_requestAccounts'}).then(function(accounts){
-    walletAddress=accounts[0];
-    var chainHex='0x'+Number(4221).toString(16);
-    window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:chainHex}]}).catch(function(e){
-      if(e.code===4902||e.code===-32603){
-        window.ethereum.request({method:'wallet_addEthereumChain',params:[{chainId:chainHex,chainName:'GenLayer Bradbury Testnet',rpcUrls:['https://rpc-bradbury.genlayer.com'],nativeCurrency:{name:'GEN',symbol:'GEN',decimals:18},blockExplorerUrls:['https://explorer-bradbury.genlayer.com']}]});
-      }
-    });
-    var btn=document.getElementById('walletBtn');
-    btn.textContent=walletAddress.slice(0,6)+'...'+walletAddress.slice(-4);
-    btn.classList.add('connected');
-    showToast('Wallet connected','success');
-  }).catch(function(e){showToast('Connection failed','error');});
-}
-
-function loadTasks(){
-  document.getElementById('taskGrid').innerHTML='<div class="empty-state">Loading...</div>';
-  Promise.all([callContract('get_count',[]),callContract('get_all',[])])
-    .then(function(results){
-      var count=parseInt(results[0])||0;
-      var allStr=results[1];
-      document.getElementById('statTasks').textContent=count;
-      allTasks=[];
-      var completed=0;
-      if(allStr&&allStr.indexOf('|')>-1){
-        allStr.split(';;').forEach(function(part,i){
-          var f=part.split('|');
-          if(f.length>=3&&f[0]){
-            allTasks.push({id:i,desc:f[0],status:f[1],reward:f[2]});
-            if(f[1]==='completed')completed++;
-          }
+window.connectWallet = async function() {
+  if (!window.ethereum) { showToast('MetaMask not found', 'error'); return; }
+  try {
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    walletAddress = accounts[0];
+    const chainIdHex = '0x' + (4221).toString(16);
+    try {
+      await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: chainIdHex }] });
+    } catch(e) {
+      if (e.code === 4902 || e.code === -32603) {
+        await window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [{ chainId: chainIdHex, chainName: 'GenLayer Bradbury Testnet', rpcUrls: ['https://rpc-bradbury.genlayer.com'], nativeCurrency: { name: 'GEN', symbol: 'GEN', decimals: 18 }, blockExplorerUrls: ['https://explorer-bradbury.genlayer.com'] }]
         });
       }
-      document.getElementById('statCompleted').textContent=completed;
-      renderTasks();
-    }).catch(function(e){
-      document.getElementById('taskGrid').innerHTML='<div class="empty-state">Error: '+e.message+'</div>';
-    });
-}
+    }
+    const btn = document.getElementById('walletBtn');
+    btn.textContent = walletAddress.slice(0,6) + '...' + walletAddress.slice(-4);
+    btn.classList.add('connected');
+    showToast('Wallet connected', 'success');
+  } catch(e) { showToast('Connection failed', 'error'); }
+};
 
-function renderTasks(){
-  var grid=document.getElementById('taskGrid');
-  var filtered=currentFilter==='all'?allTasks:allTasks.filter(function(t){return t.status===currentFilter;});
-  if(!filtered.length){grid.innerHTML='<div class="empty-state">No tasks found.</div>';return;}
-  var html=filtered.slice().reverse().map(function(t){
-    return '<div class="task-card" data-id="'+t.id+'" data-status="'+t.status+'"><div class="task-id">#'+t.id+'</div><div class="task-body"><div class="task-desc">'+t.desc+'</div></div><div class="task-meta"><div class="task-reward">'+t.reward+' GEN</div><div class="task-status status-'+t.status+'">'+t.status.toUpperCase()+'</div></div></div>';
-  }).join('');
-  grid.innerHTML=html;
-  grid.querySelectorAll('.task-card').forEach(function(card){
-    card.addEventListener('click',function(){
-      var id=parseInt(card.dataset.id);
-      var status=card.dataset.status;
-      if(status==='open')openSubmit(id);
-    });
+async function sendWriteTx(calldataRaw) {
+  const { encodeFunctionData } = await import('https://esm.sh/viem@latest');
+  const hex = '0x' + Array.from(calldataRaw).map(b => b.toString(16).padStart(2,'0')).join('');
+  const validUntil = BigInt(Math.floor(Date.now() / 1000) + 3600);
+  const txData = encodeFunctionData({
+    abi: ADD_TX_ABI, functionName: 'addTransaction',
+    args: [walletAddress, CONTRACT, 5n, 3n, hex, validUntil]
+  });
+  return await window.ethereum.request({
+    method: 'eth_sendTransaction',
+    params: [{ from: walletAddress, to: CONSENSUS, data: txData, gas: '0x' + (500000).toString(16) }]
   });
 }
 
-function openPost(){
-  if(!walletAddress){showToast('Connect wallet first','error');return;}
+window.openPostTask = function() {
+  if (!walletAddress) { showToast('Connect wallet first', 'error'); return; }
   document.getElementById('postModal').classList.add('open');
-}
+};
 
-function postTask(){
-  var desc=document.getElementById('taskDesc').value.trim();
-  var rubric=document.getElementById('taskRubric').value.trim();
-  var reward=document.getElementById('taskReward').value.trim();
-  if(!desc||!rubric||!reward){showToast('Fill all fields','error');return;}
-  var btn=document.getElementById('postBtn');
-  btn.innerHTML='<span class="spinner"></span>Posting...';btn.disabled=true;
-  var cd=encodeCalldata({method:'post_task',args:[desc,rubric,reward]});
-  sendTx(cd).then(function(hash){
-    showToast('Task posted! '+hash.slice(0,10)+'...','success');
-    document.getElementById('postModal').classList.remove('open');
-    document.getElementById('taskDesc').value='';
-    document.getElementById('taskRubric').value='';
-    document.getElementById('taskReward').value='';
-    setTimeout(loadTasks,30000);
-  }).catch(function(e){showToast('Error: '+e.message.slice(0,50),'error');})
-  .finally(function(){btn.innerHTML='POST TASK';btn.disabled=false;});
-}
+window.closeModal = function(id) {
+  document.getElementById(id).classList.remove('open');
+};
 
-function openSubmit(id){
-  if(!walletAddress){showToast('Connect wallet first','error');return;}
-  selectedTaskId=id;
-  var task=allTasks.find(function(t){return t.id===id;});
-  document.getElementById('taskDetail').innerHTML='<strong>Task #'+id+'</strong><br>'+(task?task.desc:'');
+window.postTask = async function() {
+  const desc = document.getElementById('taskDesc').value.trim();
+  const rubric = document.getElementById('taskRubric').value.trim();
+  const reward = document.getElementById('taskReward').value.trim();
+  if (!desc || !rubric || !reward) { showToast('Fill all fields', 'error'); return; }
+  const btn = document.getElementById('postBtn');
+  btn.innerHTML = '<span class="spinner"></span>Posting...';
+  btn.disabled = true;
+  try {
+    const cd = encodeCalldata({ method: 'post_task', args: [desc, rubric, reward] });
+    const hash = await sendWriteTx(cd);
+    showToast('Task posted! ' + hash.slice(0,10) + '...', 'success');
+    closeModal('postModal');
+    document.getElementById('taskDesc').value = '';
+    document.getElementById('taskRubric').value = '';
+    document.getElementById('taskReward').value = '';
+    setTimeout(refreshTasks, 30000);
+  } catch(e) { showToast('Error: ' + e.message.slice(0,40), 'error'); }
+  btn.innerHTML = 'POST TASK'; btn.disabled = false;
+};
+
+window.openSubmit = async function(taskId) {
+  if (!walletAddress) { showToast('Connect wallet first', 'error'); return; }
+  selectedTaskId = taskId;
+  const detail = document.getElementById('selectedTaskDetail');
+  detail.innerHTML = 'Loading...';
   document.getElementById('submitModal').classList.add('open');
-}
+  try {
+    const info = await readContract('get_task', [taskId]);
+    detail.innerHTML = `<strong>Task #${taskId}</strong>${info}`;
+  } catch(e) { detail.innerHTML = 'Could not load task details.'; }
+};
 
-function submitResult(){
-  var result=document.getElementById('resultText').value.trim();
-  if(!result){showToast('Enter your result','error');return;}
-  var btn=document.getElementById('submitBtn');
-  btn.innerHTML='<span class="spinner"></span>Submitting...';btn.disabled=true;
-  var cd=encodeCalldata({method:'submit_result',args:[selectedTaskId,result]});
-  sendTx(cd).then(function(hash){
-    showToast('Submitted! Consensus ~2min','success');
-    document.getElementById('submitModal').classList.remove('open');
-    document.getElementById('resultText').value='';
-  }).catch(function(e){showToast('Error: '+e.message.slice(0,50),'error');})
-  .finally(function(){btn.innerHTML='SUBMIT FOR JUDGMENT';btn.disabled=false;});
-}
+window.submitResult = async function() {
+  const result = document.getElementById('resultText').value.trim();
+  if (!result) { showToast('Enter your result', 'error'); return; }
+  const btn = document.getElementById('submitBtn');
+  btn.innerHTML = '<span class="spinner"></span>Submitting to consensus...';
+  btn.disabled = true;
+  try {
+    const cd = encodeCalldata({ method: 'submit_result', args: [selectedTaskId, result] });
+    const hash = await sendWriteTx(cd);
+    showToast('Submitted! Consensus in ~2min. ' + hash.slice(0,10) + '...', 'success');
+    closeModal('submitModal');
+    document.getElementById('resultText').value = '';
+  } catch(e) { showToast('Error: ' + e.message.slice(0,40), 'error'); }
+  btn.innerHTML = 'SUBMIT FOR JUDGMENT'; btn.disabled = false;
+};
 
-function checkRep(){
-  var addr=document.getElementById('repInput').value.trim();
-  if(!addr)return;
-  var b64=btoa(String.fromCharCode.apply(null,hexToBytes(addr.replace('0x',''))));
-  callContract('get_reputation',[b64]).then(function(rep){
-    document.getElementById('repResult').style.display='block';
-    var m=rep.match(/Completed: (\d+) \| Failed: (\d+)/);
-    if(m){
-      var c=parseInt(m[1]),f=parseInt(m[2]);
-      document.getElementById('repC').textContent=c;
-      document.getElementById('repF').textContent=f;
-      document.getElementById('repR').textContent=(c+f>0?Math.round(c/(c+f)*100)+'%':'—');
+window.checkReputation = async function() {
+  const addr = document.getElementById('repInput').value.trim();
+  if (!addr) return;
+  try {
+    const b64 = addrToB64(addr);
+    const rep = await readContract('get_reputation', [b64]);
+    const result = document.getElementById('repResult');
+    result.style.display = 'block';
+    if (rep === 'no reputation') {
+      document.getElementById('repCompleted').textContent = '0';
+      document.getElementById('repFailed').textContent = '0';
+      document.getElementById('repRate').textContent = '—';
+    } else {
+      const m = rep.match(/Completed: (\d+) \| Failed: (\d+)/);
+      if (m) {
+        const c = parseInt(m[1]), f = parseInt(m[2]);
+        document.getElementById('repCompleted').textContent = c;
+        document.getElementById('repFailed').textContent = f;
+        const total = c + f;
+        document.getElementById('repRate').textContent = total > 0 ? Math.round(c/total*100) + '%' : '—';
+      }
     }
-  }).catch(function(){showToast('Error checking reputation','error');});
+  } catch(e) { showToast('Error checking reputation', 'error'); }
+};
+
+function addrToB64(hex) {
+  hex = hex.replace('0x', '');
+  const bytes = new Uint8Array(hex.match(/.{2}/g).map(b => parseInt(b, 16)));
+  return btoa(String.fromCharCode(...bytes));
 }
 
-document.getElementById('walletBtn').addEventListener('click',connectWallet);
-document.getElementById('btnPost1').addEventListener('click',openPost);
-document.getElementById('btnPost2').addEventListener('click',openPost);
-document.getElementById('btnBrowse').addEventListener('click',function(){document.getElementById('taskSection').scrollIntoView({behavior:'smooth'});});
-document.getElementById('tabAll').addEventListener('click',function(){currentFilter='all';document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});this.classList.add('active');renderTasks();});
-document.getElementById('tabOpen').addEventListener('click',function(){currentFilter='open';document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});this.classList.add('active');renderTasks();});
-document.getElementById('tabCompleted').addEventListener('click',function(){currentFilter='completed';document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});this.classList.add('active');renderTasks();});
-document.getElementById('tabRefresh').addEventListener('click',loadTasks);
-document.getElementById('closePost').addEventListener('click',function(){document.getElementById('postModal').classList.remove('open');});
-document.getElementById('closeSubmit').addEventListener('click',function(){document.getElementById('submitModal').classList.remove('open');});
-document.getElementById('postBtn').addEventListener('click',postTask);
-document.getElementById('submitBtn').addEventListener('click',submitResult);
-document.getElementById('btnRep').addEventListener('click',checkRep);
+window.filterTasks = function(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderTasks();
+};
 
-loadTasks();
+window.refreshTasks = async function() {
+  await loadTasks();
+};
+
+async function loadTasks() {
+  const grid = document.getElementById('taskGrid');
+  try {
+    const count = await readContract('get_count', []);
+    const n = parseInt(count) || 0;
+    document.getElementById('statTasks').textContent = n;
+    allTasks = [];
+    let completed = 0;
+    for (let i = 0; i < n; i++) {
+      try {
+        const [info, status] = await Promise.all([
+          readContract('get_task', [i]),
+          readContract('get_status', [i])
+        ]);
+        if (info === "not found") continue;
+        const match = info.match(/Task: (.+) \| Status: .+ \| Reward: (.+)/);
+        if (match) {
+          allTasks.push({ id: i, desc: match[1], reward: match[2], status, rubric: '' });
+          if (status === 'completed') completed++;
+        }
+      } catch(e) {}
+    }
+    document.getElementById('statCompleted').textContent = completed;
+    renderTasks();
+  } catch(e) {
+    grid.innerHTML = '<div class="empty-state">Could not load tasks. Check connection.</div>';
+  }
+}
+
+function renderTasks() {
+  const grid = document.getElementById('taskGrid');
+  const filtered = currentFilter === 'all' ? allTasks : allTasks.filter(t => t.status === currentFilter);
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="empty-state">' + (currentFilter === 'all' ? 'No tasks yet. Be the first to post one.' : 'No ' + currentFilter + ' tasks.') + '</div>';
+    return;
+  }
+  grid.innerHTML = filtered.slice().reverse().map(t => `
+    <div class="task-card" onclick="${t.status === 'open' ? `openSubmit(${t.id})` : ''}">
+      <div class="task-id">#${t.id}</div>
+      <div class="task-body">
+        <div class="task-desc">${t.desc}</div>
+      </div>
+      <div class="task-meta">
+        <div class="task-reward">${t.reward} GEN</div>
+        <div class="task-status status-${t.status}">${t.status.toUpperCase()}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + type + ' show';
+  setTimeout(() => t.classList.remove('show'), 4000);
+}
+
+(async function init() {
+  try { await loadTasks(); } catch(e) {}
+})();
 </script>
 </body>
 </html>
