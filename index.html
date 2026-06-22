@@ -566,27 +566,24 @@ async function loadTasks() {
     document.getElementById('statTasks').textContent = n;
     allTasks = [];
     let completed = 0;
-    for (let i = 0; i < n; i++) {
-      try {
-        const [info, status] = await Promise.all([
-          readContract('get_task', [i]),
-          readContract('get_status', [i])
-        ]);
-        if (info === "not found") continue;
-        const match = info.match(/Task: (.+) \| Status: .+ \| Reward: (.+)/);
-        if (match) {
-          allTasks.push({ id: i, desc: match[1], reward: match[2], status, rubric: '' });
-          if (status === 'completed') completed++;
-        }
-      } catch(e) {}
+    if (n > 0) {
+      const allStr = await readContract('get_all', []);
+      if (allStr && allStr.trim() && allStr !== 'not found') {
+        allStr.split(';;').forEach(function(part, i) {
+          if (!part.trim()) return;
+          const f = part.split('|');
+          if (f.length < 3 || !f[0]) return;
+          allTasks.push({ id: i, desc: f[0], status: f[1], reward: f[2], rubric: '' });
+          if (f[1] === 'completed') completed++;
+        });
+      }
     }
     document.getElementById('statCompleted').textContent = completed;
     renderTasks();
   } catch(e) {
-    grid.innerHTML = '<div class="empty-state">Could not load tasks. Check connection.</div>';
+    grid.innerHTML = '<div class="empty-state">Could not load tasks.</div>';
   }
 }
-
 function renderTasks() {
   const grid = document.getElementById('taskGrid');
   const filtered = currentFilter === 'all' ? allTasks : allTasks.filter(t => t.status === currentFilter);
