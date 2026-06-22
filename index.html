@@ -581,7 +581,8 @@ async function loadTasks() {
     document.getElementById('statCompleted').textContent = completed;
     renderTasks();
   } catch(e) {
-    grid.innerHTML = '<div class="empty-state">Could not load tasks.</div>';
+    console.error('loadTasks error:', e);
+    grid.innerHTML = '<div class="empty-state">Error: ' + e.message + '</div>';
   }
 }
 function renderTasks() {
