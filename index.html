@@ -448,8 +448,10 @@ async function sendWriteTx(functionName, args) {
   console.log('sendWriteTx walletAddress:', walletAddress);
   const c = await initClient();
   if (!walletAddress) throw new Error('Wallet not connected');
+  const { privateKeyToAccount } = await import('https://esm.sh/viem@latest/accounts');
+  const acct = { address: walletAddress, type: 'json-rpc' };
   return await c.writeContract({
-    account: walletAddress,
+    account: acct,
     address: CONTRACT,
     functionName,
     args,
