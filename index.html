@@ -444,17 +444,17 @@ window.connectWallet = async function() {
   } catch(e) { showToast('Connection failed', 'error'); }
 };
 
-async function sendWriteTx(calldataRaw) {
-  const { encodeFunctionData } = await import('https://esm.sh/viem@latest');
-  const hex = '0x' + Array.from(calldataRaw).map(b => b.toString(16).padStart(2,'0')).join('');
-  const validUntil = BigInt(Math.floor(Date.now() / 1000) + 3600);
-  const txData = encodeFunctionData({
-    abi: ADD_TX_ABI, functionName: 'addTransaction',
-    args: [walletAddress, CONTRACT, 5n, 3n, hex, validUntil]
-  });
-  return await window.ethereum.request({
-    method: 'eth_sendTransaction',
-    params: [{ from: walletAddress, to: CONSENSUS, data: txData, gas: '0x' + (500000).toString(16) }]
+async function sendWriteTx(functionName, args) {
+  const c = await initClient();
+  const { createWalletClient, custom } = await import('https://esm.sh/viem@latest');
+  const { testnetBradbury } = await import('https://esm.sh/genlayer-js@latest/chains');
+  const walletClient = createWalletClient({ chain: testnetBradbury, transport: custom(window.ethereum) });
+  const [account] = await walletClient.getAddresses();
+  return await c.writeContract({
+    account,
+    address: CONTRACT,
+    functionName,
+    args,
   });
 }
 
@@ -476,8 +476,7 @@ window.postTask = async function() {
   btn.innerHTML = '<span class="spinner"></span>Posting...';
   btn.disabled = true;
   try {
-    const cd = encodeCalldata({ method: 'post_task', args: [desc, rubric, reward] });
-    const hash = await sendWriteTx(cd);
+    const hash = await sendWriteTx('post_task', [desc, rubric, reward]);
     showToast('Task posted! ' + hash.slice(0,10) + '...', 'success');
     closeModal('postModal');
     document.getElementById('taskDesc').value = '';
@@ -507,8 +506,7 @@ window.submitResult = async function() {
   btn.innerHTML = '<span class="spinner"></span>Submitting to consensus...';
   btn.disabled = true;
   try {
-    const cd = encodeCalldata({ method: 'submit_result', args: [selectedTaskId, result] });
-    const hash = await sendWriteTx(cd);
+    const hash = await sendWriteTx('submit_result', [selectedTaskId, result]);
     showToast('Submitted! Consensus in ~2min. ' + hash.slice(0,10) + '...', 'success');
     closeModal('submitModal');
     document.getElementById('resultText').value = '';
