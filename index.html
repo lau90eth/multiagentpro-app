@@ -446,10 +446,9 @@ window.connectWallet = async function() {
 
 async function sendWriteTx(functionName, args) {
   const c = await initClient();
-  const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-  const account = accounts[0];
+  if (!walletAddress) throw new Error('Wallet not connected');
   return await c.writeContract({
-    account,
+    account: walletAddress,
     address: CONTRACT,
     functionName,
     args,
