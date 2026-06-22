@@ -446,10 +446,8 @@ window.connectWallet = async function() {
 
 async function sendWriteTx(functionName, args) {
   const c = await initClient();
-  const { createWalletClient, custom } = await import('https://esm.sh/viem@latest');
-  const { testnetBradbury } = await import('https://esm.sh/genlayer-js@latest/chains');
-  const walletClient = createWalletClient({ chain: testnetBradbury, transport: custom(window.ethereum) });
-  const [account] = await walletClient.getAddresses();
+  const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+  const account = accounts[0];
   return await c.writeContract({
     account,
     address: CONTRACT,
