@@ -481,7 +481,7 @@ window.postTask = async function() {
     document.getElementById('taskRubric').value = '';
     document.getElementById('taskReward').value = '';
     setTimeout(refreshTasks, 30000);
-  } catch(e) { showToast('Error: ' + e.message.slice(0,40), 'error'); }
+  } catch(e) { console.error('FULL ERROR:', e); showToast('Error: ' + e.message.slice(0,40), 'error'); }
   btn.innerHTML = 'POST TASK'; btn.disabled = false;
 };
 
@@ -508,7 +508,7 @@ window.submitResult = async function() {
     showToast('Submitted! Consensus in ~2min. ' + hash.slice(0,10) + '...', 'success');
     closeModal('submitModal');
     document.getElementById('resultText').value = '';
-  } catch(e) { showToast('Error: ' + e.message.slice(0,40), 'error'); }
+  } catch(e) { console.error('FULL ERROR:', e); showToast('Error: ' + e.message.slice(0,40), 'error'); }
   btn.innerHTML = 'SUBMIT FOR JUDGMENT'; btn.disabled = false;
 };
 
