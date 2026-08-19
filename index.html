@@ -279,7 +279,7 @@ footer { padding: 32px 0; border-top: 1px solid var(--border); display: flex; ju
   <footer>
     <div class="footer-left">
       Built by <a href="https://github.com/lau90eth" target="_blank" style="color:var(--accent2);text-decoration:none">lau90eth</a> · GenLayer Builders Program<br>
-      <span class="footer-contract">Contract: 0x2C98324175Ea9B01322BBfb0366AB051665DEa68 · Bradbury Testnet</span>
+      <span class="footer-contract">Contract: 0xb69BF7B587C664dfcd2D39eD58032B03fCCCe307 · Bradbury Testnet</span>
     </div>
     <div class="footer-links">
       <a href="https://github.com/lau90eth/multiagentpro" target="_blank">GitHub</a>
@@ -328,7 +328,7 @@ footer { padding: 32px 0; border-top: 1px solid var(--border); display: flex; ju
 <div class="toast" id="toast"></div>
 
 <script type="module">
-const CONTRACT = '0x2C98324175Ea9B01322BBfb0366AB051665DEa68';
+const CONTRACT = '0xb69BF7B587C664dfcd2D39eD58032B03fCCCe307';
 const RPC = 'https://rpc-bradbury.genlayer.com';
 const EXPLORER = 'https://explorer-bradbury.genlayer.com/tx/';
 
@@ -494,7 +494,7 @@ window.openSubmit = async function(taskId) {
   detail.innerHTML = 'Loading...';
   document.getElementById('submitModal').classList.add('open');
   try {
-    const info = await readContract('get_task', [taskId]);
+    const info = await readContract('get_task', [String(taskId)]);
     detail.innerHTML = `<strong>Task #${taskId}</strong>${info}`;
   } catch(e) { detail.innerHTML = 'Could not load task details.'; }
 };
@@ -506,7 +506,7 @@ window.submitResult = async function() {
   btn.innerHTML = '<span class="spinner"></span>Submitting to consensus...';
   btn.disabled = true;
   try {
-    const hash = await sendWriteTx('submit_result', [selectedTaskId, result]);
+    const hash = await sendWriteTx('submit_result', [String(selectedTaskId), result]);
     showToast('Submitted! Consensus in ~2min. ' + hash.slice(0,10) + '...', 'success');
     closeModal('submitModal');
     document.getElementById('resultText').value = '';
@@ -591,7 +591,7 @@ function renderTasks() {
     return;
   }
   grid.innerHTML = filtered.slice().reverse().map(t => `
-    <div class="task-card" onclick="${t.status === 'open' ? `openSubmit(${t.id})` : ''}">
+    <div class="task-card" onclick="${t.status === 'open' ? `openSubmit('${t.id}')` : ''}">
       <div class="task-id">#${t.id}</div>
       <div class="task-body">
         <div class="task-desc">${t.desc}</div>
