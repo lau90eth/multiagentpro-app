@@ -5,7 +5,7 @@ class MultiAgentPro(gl.Contract):
     task_count: u256
 
     # Flat storage — key format: "{task_id}:{field}"
-    # Fields: desc, status, worker, reward, result
+    # Fields: desc, rubric, status, worker, reward, result
     tasks: TreeMap[str, str]
 
     # worker_address -> "completed:total" e.g. "7:9"
@@ -17,11 +17,12 @@ class MultiAgentPro(gl.Contract):
         self.reputation = TreeMap()
 
     @gl.public.write
-    def post_task(self, description: str, reward: str, worker: str) -> None:
+    def post_task(self, description: str, rubric: str, reward: str) -> None:
         tid = str(self.task_count)
         self.tasks[f"{tid}:desc"] = str(description)[:200]
+        self.tasks[f"{tid}:rubric"] = str(rubric)[:200]
         self.tasks[f"{tid}:status"] = "open"
-        self.tasks[f"{tid}:worker"] = str(worker)
+        self.tasks[f"{tid}:worker"] = ""
         self.tasks[f"{tid}:reward"] = str(reward)
         self.tasks[f"{tid}:result"] = ""
         self.task_count = self.task_count + u256(1)
@@ -33,7 +34,8 @@ class MultiAgentPro(gl.Contract):
         if status != "open":
             return
         desc = self.tasks.get(f"{tid}:desc", "")
-        worker = self.tasks.get(f"{tid}:worker", "")
+        rubric = self.tasks.get(f"{tid}:rubric", "")
+        worker = str(gl.message.sender_address)
 
         result_trunc = str(result)[:400]
 
@@ -41,8 +43,9 @@ class MultiAgentPro(gl.Contract):
             prompt = (
                 f"You are judging whether submitted work satisfies the task requirements.\n"
                 f"Task: {desc}\n"
+                f"Evaluation rubric: {rubric}\n"
                 f"Submitted result: {result_trunc}\n"
-                f"Judge strictly against the task requirements. "
+                f"Judge strictly against the rubric above. "
                 f"Reply ONLY: APPROVED or REJECTED"
             )
             raw = gl.nondet.exec_prompt(prompt)
@@ -61,12 +64,13 @@ class MultiAgentPro(gl.Contract):
             if leader_verdict not in ("APPROVED", "REJECTED"):
                 return False
 
-            # Validator independently re-judges the same task/result
+            # Validator independently re-judges against the same rubric
             prompt = (
                 f"You are judging whether submitted work satisfies the task requirements.\n"
                 f"Task: {desc}\n"
+                f"Evaluation rubric: {rubric}\n"
                 f"Submitted result: {result_trunc}\n"
-                f"Judge strictly against the task requirements. "
+                f"Judge strictly against the rubric above. "
                 f"Reply ONLY: APPROVED or REJECTED"
             )
             raw = gl.nondet.exec_prompt(prompt)
@@ -83,9 +87,10 @@ class MultiAgentPro(gl.Contract):
 
         new_status = "completed" if verdict == "APPROVED" else "failed"
         self.tasks[f"{tid}:status"] = new_status
+        self.tasks[f"{tid}:worker"] = worker
         self.tasks[f"{tid}:result"] = result_trunc[:150]
 
-        # Update worker reputation
+        # Update worker reputation — worker is whoever actually submitted, not whoever posted
         rep = self.reputation.get(worker, "0:0")
         try:
             completed_str, total_str = rep.split(":")
@@ -107,10 +112,11 @@ class MultiAgentPro(gl.Contract):
         desc = self.tasks.get(f"{tid}:desc", "")
         if not desc:
             return "not found"
+        rubric = self.tasks.get(f"{tid}:rubric", "")
         status = self.tasks.get(f"{tid}:status", "")
         worker = self.tasks.get(f"{tid}:worker", "")
         reward = self.tasks.get(f"{tid}:reward", "")
-        return f"Task: {desc} | Status: {status} | Worker: {worker} | Reward: {reward}"
+        return f"Task: {desc} | Rubric: {rubric} | Status: {status} | Worker: {worker} | Reward: {reward}"
 
     @gl.public.view
     def get_count(self) -> str:
@@ -147,7 +153,8 @@ class MultiAgentPro(gl.Contract):
             tid = str(i)
             desc = self.tasks.get(f"{tid}:desc", "")
             if desc:
+                rubric = self.tasks.get(f"{tid}:rubric", "")
                 status = self.tasks.get(f"{tid}:status", "")
                 reward = self.tasks.get(f"{tid}:reward", "")
-                parts.append(f"{desc}|{status}|{reward}")
+                parts.append(f"{desc}|{status}|{reward}|{rubric}")
         return ";;".join(parts)

@@ -279,7 +279,7 @@ footer { padding: 32px 0; border-top: 1px solid var(--border); display: flex; ju
   <footer>
     <div class="footer-left">
       Built by <a href="https://github.com/lau90eth" target="_blank" style="color:var(--accent2);text-decoration:none">lau90eth</a> · GenLayer Builders Program<br>
-      <span class="footer-contract">Contract: 0xb69BF7B587C664dfcd2D39eD58032B03fCCCe307 · Bradbury Testnet</span>
+      <span class="footer-contract">Contract: 0xB1D22C78BA545Dc72373812941903D63451ff731 · Bradbury Testnet</span>
     </div>
     <div class="footer-links">
       <a href="https://github.com/lau90eth/multiagentpro" target="_blank">GitHub</a>
@@ -328,7 +328,7 @@ footer { padding: 32px 0; border-top: 1px solid var(--border); display: flex; ju
 <div class="toast" id="toast"></div>
 
 <script type="module">
-const CONTRACT = '0xb69BF7B587C664dfcd2D39eD58032B03fCCCe307';
+const CONTRACT = '0xB1D22C78BA545Dc72373812941903D63451ff731';
 const RPC = 'https://rpc-bradbury.genlayer.com';
 const EXPLORER = 'https://explorer-bradbury.genlayer.com/tx/';
 
@@ -527,12 +527,12 @@ window.checkReputation = async function() {
       document.getElementById('repFailed').textContent = '0';
       document.getElementById('repRate').textContent = '—';
     } else {
-      const m = rep.match(/Completed: (\d+) \| Failed: (\d+)/);
+      const m = rep.match(/(\d+)\/(\d+) tasks completed/);
       if (m) {
-        const c = parseInt(m[1]), f = parseInt(m[2]);
+        const c = parseInt(m[1]), total = parseInt(m[2]);
+        const f = total - c;
         document.getElementById('repCompleted').textContent = c;
         document.getElementById('repFailed').textContent = f;
-        const total = c + f;
         document.getElementById('repRate').textContent = total > 0 ? Math.round(c/total*100) + '%' : '—';
       }
     }
@@ -570,8 +570,8 @@ async function loadTasks() {
         allStr.split(';;').forEach(function(part, i) {
           if (!part.trim()) return;
           const f = part.split('|');
-          if (f.length < 3 || !f[0]) return;
-          allTasks.push({ id: i, desc: f[0], status: f[1], reward: f[2], rubric: '' });
+          if (f.length < 4 || !f[0]) return;
+          allTasks.push({ id: i, desc: f[0], status: f[1], reward: f[2], rubric: f[3] || '' });
           if (f[1] === 'completed') completed++;
         });
       }
