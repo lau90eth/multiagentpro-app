@@ -64,3 +64,12 @@ genlayer call <CONTRACT_ADDRESS> get_status --args 0
 GenLayer Bradbury Testnet (Chain ID: 4221)
 - RPC: `https://rpc-bradbury.genlayer.com`
 - Explorer: `https://explorer-bradbury.genlayer.com`
+
+## Testing
+
+```bash
+npm install
+MULTIAGENTPRO_CONTRACT=0xB1D22C78BA545Dc72373812941903D63451ff731 GL_PRIVKEY=0x... npm test
+```
+
+Covers: `post_task` → `submit_result` with rubric-based adjudication, and `get_reputation` format/address-conversion parity with the frontend (shared via `lib/address.mjs`).

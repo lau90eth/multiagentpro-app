@@ -328,6 +328,7 @@ footer { padding: 32px 0; border-top: 1px solid var(--border); display: flex; ju
 <div class="toast" id="toast"></div>
 
 <script type="module">
+import { toReputationKey } from './lib/address.mjs';
 const CONTRACT = '0xB1D22C78BA545Dc72373812941903D63451ff731';
 const RPC = 'https://rpc-bradbury.genlayer.com';
 const EXPLORER = 'https://explorer-bradbury.genlayer.com/tx/';
@@ -518,8 +519,8 @@ window.checkReputation = async function() {
   const addr = document.getElementById('repInput').value.trim();
   if (!addr) return;
   try {
-    const b64 = addrToB64(addr);
-    const rep = await readContract('get_reputation', [b64]);
+    const key = toReputationKey(addr);
+    const rep = await readContract('get_reputation', [key]);
     const result = document.getElementById('repResult');
     result.style.display = 'block';
     if (rep === 'no reputation') {
@@ -539,11 +540,7 @@ window.checkReputation = async function() {
   } catch(e) { showToast('Error checking reputation', 'error'); }
 };
 
-function addrToB64(hex) {
-  hex = hex.replace('0x', '');
-  const bytes = new Uint8Array(hex.match(/.{2}/g).map(b => parseInt(b, 16)));
-  return btoa(String.fromCharCode(...bytes));
-}
+
 
 window.filterTasks = function(filter, btn) {
   currentFilter = filter;

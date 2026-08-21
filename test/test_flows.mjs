@@ -1,10 +1,14 @@
 // Integration test: post_task -> submit_result (rubric-based adjudication)
-// and get_reputation format vs frontend parser in index.html.
-// Deliberately paced with sleeps between RPC calls to tolerate Bradbury
-// testnet congestion (gas rate limit errors on rapid-fire calls).
+// and get_reputation format parity + address conversion parity with index.html.
+//
+// Setup:
+//   npm install
+// Run:
+//   MULTIAGENTPRO_CONTRACT=0x... GL_PRIVKEY=0x... node test/test_flows.mjs
 import { createClient } from 'genlayer-js';
 import { testnetBradbury } from 'genlayer-js/chains';
 import { privateKeyToAccount } from 'viem/accounts';
+import { toReputationKey } from '../lib/address.mjs';
 
 const CONTRACT = process.env.MULTIAGENTPRO_CONTRACT;
 if (!CONTRACT) { console.error('Set MULTIAGENTPRO_CONTRACT env var'); process.exit(1); }
@@ -66,8 +70,11 @@ assert(task.includes('Rubric:'), 'get_task exposes rubric field');
 assert(task.includes('completed') || task.includes('failed'), 'submit_result resolved a verdict using the rubric');
 await sleep(3000);
 
-console.log('--- Flow 2: get_reputation format matches frontend parser ---');
-const rep = await retryable(() => client.readContract({ address: CONTRACT, functionName: 'get_reputation', args: [account.address] }), 'get_reputation');
+console.log('--- Flow 2: get_reputation format + address conversion match the frontend ---');
+// Uses the exact same helper index.html imports from lib/address.mjs — if the
+// frontend's conversion ever changes, this test changes with it automatically.
+const key = toReputationKey(account.address);
+const rep = await retryable(() => client.readContract({ address: CONTRACT, functionName: 'get_reputation', args: [key] }), 'get_reputation');
 const parsed = parseReputation(rep);
 assert(parsed !== null, `get_reputation format is parseable by the frontend regex (got: "${rep}")`);
 assert(parsed && parsed.total >= 1, 'reputation total incremented after submit_result');
